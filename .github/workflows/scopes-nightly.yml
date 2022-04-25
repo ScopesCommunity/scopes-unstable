@@ -7,10 +7,10 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
     steps:
-      run: curl https://hg.sr.ht/~duangle/majoreo/raw/eo | python3 - init majoreo && ./bin/eo import scopes
-      run: ./bin/eo install -y scopes-unstable
-      run: rm ./bin/eo
-      run: tar -czf scopes-nightly.tar.gz bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md README.md
+      - run: curl https://hg.sr.ht/~duangle/majoreo/raw/eo | python3 - init majoreo && ./bin/eo import scopes
+      - run: ./bin/eo install -y scopes-unstable
+      - run: rm ./bin/eo
+      - run: tar -czf scopes-nightly.tar.gz bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md README.md
       - name: Distribution Artifact
         uses: actions/upload-artifact@v3
         with:
