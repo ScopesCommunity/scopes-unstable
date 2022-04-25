@@ -7,6 +7,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Install build dependencies
+        run: sudo apt install mkdocs
       - run: curl https://hg.sr.ht/~duangle/majoreo/raw/eo | python3 - init majoreo && ./bin/eo import scopes
       - run: ./bin/eo install -y scopes-unstable
       - run: rm ./bin/eo
