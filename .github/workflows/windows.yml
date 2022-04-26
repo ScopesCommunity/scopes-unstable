@@ -1,0 +1,21 @@
+name: Scopes Nightly Windows
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: numworks/setup-msys2@v1
+      - name: Install build dependencies
+        run: msys2do pacman -S make mingw64/mingw-w64-x86_64-python mingw64/mingw-w64-x86_64-python-pip
+      - run: msys2do curl https://hg.sr.ht/~duangle/majoreo/raw/eo | python3 - init majoreo && ./bin/eo import scopes
+      - run: msys2do ./bin/eo install -y scopes-unstable
+      - run: msys2do rm ./bin/eo
+      - run: msys2do tar -czf scopes-unstable.tar.gz bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
+      - name: Distribution Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: scopes-unstable
+          path: scopes-unstable.tar.gz
