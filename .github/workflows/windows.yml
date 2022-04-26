@@ -12,13 +12,14 @@ jobs:
     steps:
       - uses: msys2/setup-msys2@v2
       - name: Install build dependencies
-        run: pacman -S --no-confirm make mingw64/mingw-w64-x86_64-python mingw64/mingw-w64-x86_64-python-pip
+        run: pacman -S --noconfirm make mingw64/mingw-w64-x86_64-python mingw64/mingw-w64-x86_64-python-pip
       - run: curl https://hg.sr.ht/~duangle/majoreo/raw/eo | python3 - init majoreo && ./bin/eo import scopes
       - run: ./bin/eo install -y scopes-unstable
       - run: rm ./bin/eo
-      - run: tar -czf scopes-unstable.tar.gz bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
+      - run: mkdir scopes-unstable
+      - run: mv bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md scopes-unstable/
       - name: Distribution Artifact
         uses: actions/upload-artifact@v3
         with:
           name: scopes-unstable
-          path: scopes-unstable.tar.gz
+          path: scopes-unstable/
