@@ -13,8 +13,11 @@ jobs:
       - uses: msys2/setup-msys2@v2
       - name: Install build dependencies
         run: pacman -S --noconfirm make mingw64/mingw-w64-x86_64-python mingw64/mingw-w64-x86_64-python-pip
-      - run: wget "https://hg.sr.ht/~duangle/majoreo/raw/build/dist/windows/eo.exe?rev=tip" -O eo.exe
-      - run: ./eo init; ./eo import scopes
+      - run: |
+          wget "https://hg.sr.ht/~duangle/majoreo/raw/build/dist/windows/eo.exe?rev=tip" -O eo.exe
+          mkdir recipes
+          wget "https://hg.sr.ht/~duangle/scopes/raw/extras/eo/scopes.eo?rev=tip" -O recipes/scopes.eo
+      - run: ./eo init
       - run: ./eo install -y scopes-unstable
       - run: mkdir scopes-unstable
       - run: mv bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md scopes-unstable/
