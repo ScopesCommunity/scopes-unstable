@@ -6,14 +6,17 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
     steps:
-      - uses: numworks/setup-msys2@v1
+      - uses: msys2/setup-msys2@v2
       - name: Install build dependencies
-        run: msys2do pacman -S make mingw64/mingw-w64-x86_64-python mingw64/mingw-w64-x86_64-python-pip
-      - run: msys2do curl https://hg.sr.ht/~duangle/majoreo/raw/eo | python3 - init majoreo && ./bin/eo import scopes
-      - run: msys2do ./bin/eo install -y scopes-unstable
-      - run: msys2do rm ./bin/eo
-      - run: msys2do tar -czf scopes-unstable.tar.gz bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
+        run: pacman -S make mingw64/mingw-w64-x86_64-python mingw64/mingw-w64-x86_64-python-pip
+      - run: curl https://hg.sr.ht/~duangle/majoreo/raw/eo | python3 - init majoreo && ./bin/eo import scopes
+      - run: ./bin/eo install -y scopes-unstable
+      - run: rm ./bin/eo
+      - run: tar -czf scopes-unstable.tar.gz bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
       - name: Distribution Artifact
         uses: actions/upload-artifact@v3
         with:
