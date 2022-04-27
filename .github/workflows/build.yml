@@ -51,7 +51,7 @@ jobs:
           ./bin/eo install -y scopes-source-unstable
           ./build.sh
           mkdir scopes-unstable-windows-${{ needs.linux.outputs.revision }}
-      - uses : actions/download-artifact@v3
+      - uses: actions/download-artifact@v3
         with:
           name: scopes-unstable-docs-${{ needs.linux.outputs.revision }}
           path: doc
