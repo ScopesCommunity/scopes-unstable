@@ -53,6 +53,11 @@ jobs:
           ./bin/eo install -y scopes-source-unstable
           ./build.sh
           mkdir scopes-unstable-windows-${{ needs.linux.outputs.revision }}
+      - name: Cleanup
+        run: |
+          rm -r doc # we don't need the data for making the docs, and we'll copy them from the linux generated ones.
+          mkdir doc
+          rm ./bin/eo ./bin/eo.exe
       - uses: actions/download-artifact@v3
         with:
           name: scopes-unstable-docs-${{ needs.linux.outputs.revision }}
