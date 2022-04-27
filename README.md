@@ -1,5 +1,4 @@
 # scopes-unstable
-Nightly builds of Scopes using Github Actions
+Nightly builds of [Scopes](http://scopes.rocks/), based on the tip of the official repository.
 
-Go to the Actions tab to download binaries. Only Linux supported at the moment, other platforms coming soon.
-Builds are based on the latest tip from the official sourcehut repository.
+Artifacts can be downloaded from the Actions tab. Currently Linux and Windows are supported.
