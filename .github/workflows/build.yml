@@ -48,7 +48,7 @@ jobs:
           mkdir recipes
           wget "https://hg.sr.ht/~duangle/scopes/raw/extras/eo/scopes.eo?rev=tip" -O recipes/scopes.eo
           ./bin/eo init
-          ./bin/eo install -y scopes-unstable-source
+          ./bin/eo install -y scopes-source-unstable
           ./build.sh
           mkdir scopes-unstable-windows-${{ needs.linux.outputs.revision }}
       - uses : actions/download-artifact@v3
