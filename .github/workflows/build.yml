@@ -41,6 +41,8 @@ jobs:
         shell: msys2 {0}
     steps:
       - uses: msys2/setup-msys2@v2
+      - name: Install build dependencies
+        run: pacman -S --noconfirm make mingw64/mingw-w64-x86_64-python mingw64/mingw-w64-x86_64-python-pip
       - name: Build
         run: |
           mkdir bin
