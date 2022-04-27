@@ -1,20 +1,30 @@
-name: Scopes Nightly Linux
+name: Scopes Nightly
 on:
   workflow_dispatch:
   schedule:
     - cron: "0 0 * * *"
 jobs:
-  build:
+  linux:
     runs-on: ubuntu-latest
+    outputs:
+      revision: ${{ steps.revision.outputs.scopes-revision }}
     steps:
+      - id: revision
+        run: |
+          hg clone -U https://hg.sr.ht/~duangle/scopes/
+          pushd scopes
+          echo "::set-output name=scopes-revision::$(hg id -r tip -T '{node|short}')"
+          popd
       - name: Install build dependencies
         run: sudo apt install mkdocs
-      - run: curl https://hg.sr.ht/~duangle/majoreo/raw/eo | python3 - init majoreo && ./bin/eo import scopes
-      - run: ./bin/eo install -y scopes-unstable
-      - run: rm ./bin/eo
-      - run: tar -czf scopes-unstable.tar.gz bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
+      - name: Build
+        run: |
+          curl https://hg.sr.ht/~duangle/majoreo/raw/eo | python3 - init majoreo && ./bin/eo import scopes
+          ./bin/eo install -y scopes-unstable
+          rm ./bin/eo
+          tar -czf scopes-unstable-linux-${{ steps.revision.outputs.scopes-revision }}.tar.gz bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
       - name: Distribution Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: scopes-unstable
-          path: scopes-unstable.tar.gz
+          name: scopes-unstable-linux-${{ steps.revision.outputs.scopes-revision }}
+          path: scopes-unstable-linux-${{ steps.revision.outputs.scopes-revision }}.tar.gz
