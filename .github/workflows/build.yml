@@ -52,7 +52,6 @@ jobs:
           ./bin/eo init
           ./bin/eo install -y scopes-source-unstable
           ./build.sh
-          mkdir scopes-unstable-windows-${{ needs.linux.outputs.revision }}
       - name: Cleanup
         run: |
           rm -r doc # we don't need the data for making the docs, and we'll copy them from the linux generated ones.
