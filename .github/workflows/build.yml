@@ -16,7 +16,7 @@ jobs:
           echo "::set-output name=scopes-revision::$(hg id -r tip -T '{node|short}')"
           popd
       - name: Install build dependencies
-        run: sudo apt install mkdocs
+        run: sudo apt install mkdocs python3-pip
       - name: Build
         run: |
           curl https://hg.sr.ht/~duangle/majoreo/raw/eo | python3 - init majoreo && ./bin/eo import scopes
