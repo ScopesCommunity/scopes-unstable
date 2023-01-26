@@ -46,7 +46,8 @@ jobs:
       - name: Build
         run: |
           mkdir bin
-          wget "https://hg.sr.ht/~duangle/majoreo/raw/build/dist/windows/eo.exe?rev=tip" -O ./bin/eo.exe
+          wget "https://hg.sr.ht/~duangle/majoreo/raw/eo" -O ./bin/eo
+          chmod +x ./bin/eo
           mkdir recipes
           wget "https://hg.sr.ht/~duangle/scopes/raw/extras/eo/scopes.eo?rev=tip" -O recipes/scopes.eo
           ./bin/eo init
