@@ -42,7 +42,7 @@ jobs:
     steps:
       - uses: msys2/setup-msys2@v2
       - name: Install build dependencies
-        run: pacman -S --noconfirm make mingw64/mingw-w64-x86_64-python mingw64/mingw-w64-x86_64-python-pip zip  mingw64/mingw-w64-x86_64-gcc mingw64/mingw-w64-x86_64-libxml2
+        run: pacman -S --noconfirm make mingw64/mingw-w64-x86_64-python mingw64/mingw-w64-x86_64-python-pip zip  unzip mingw64/mingw-w64-x86_64-gcc mingw64/mingw-w64-x86_64-libxml2
       - name: Build
         run: |
           wget "https://hg.sr.ht/~duangle/majoreo/raw/eo" -O ./eo
