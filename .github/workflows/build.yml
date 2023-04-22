@@ -45,13 +45,13 @@ jobs:
         run: pacman -S --noconfirm make mingw64/mingw-w64-x86_64-python mingw64/mingw-w64-x86_64-python-pip zip  mingw64/mingw-w64-x86_64-gcc mingw64/mingw-w64-x86_64-libxml2
       - name: Build
         run: |
-          mkdir bin
-          wget "https://hg.sr.ht/~duangle/majoreo/raw/eo" -O ./bin/eo
-          chmod +x ./bin/eo
-          mkdir recipes
-          wget "https://hg.sr.ht/~duangle/scopes/raw/extras/eo/scopes.eo?rev=tip" -O recipes/scopes.eo
-          ./bin/eo init
-          ./bin/eo install -y scopes-source-unstable
+          wget "https://hg.sr.ht/~duangle/majoreo/raw/eo" -O ./eo
+          chmod +x ./eo
+          ./eo init scopes
+          ./eo install -y scopes-source-unstable
+          mv -f ./eo ./bin/eo # replace outdated eo version
+          # patch clang recipe
+          wget "https://raw.githubusercontent.com/ScopesCommunity/scopes-unstable/main/workarounds/clang.eo" -O ./external/recipes/clang.eo
           ./build.sh
       - name: Cleanup
         run: |
