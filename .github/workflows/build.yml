@@ -52,7 +52,10 @@ jobs:
           mv -f ./eo ./bin/eo # replace outdated eo version
           # patch clang recipe
           wget "https://raw.githubusercontent.com/ScopesCommunity/scopes-unstable/main/workarounds/clang.eo" -O ./external/recipes/clang.eo
-          ./build.sh
+          # skip build.sh script as to not overwrite the newer eo
+          ./bin/eo install -y genie clang spirv-tools spirv-cross
+          ./bin/genie gmake
+          make -j$(nproc) -C build config=release
       - name: Cleanup
         run: |
           rm -r doc # we don't need the data for making the docs, and we'll copy them from the linux generated ones.
