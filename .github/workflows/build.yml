@@ -47,7 +47,8 @@ jobs:
         run: |
           wget "https://hg.sr.ht/~duangle/majoreo/raw/eo" -O ./eo
           chmod +x ./eo
-          ./eo init scopes
+          ./eo init
+          ./eo import scopes
           ./eo install -y scopes-source-unstable
           mv -f ./eo ./bin/eo # replace outdated eo version
           # patch clang recipe
