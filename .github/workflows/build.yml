@@ -61,7 +61,7 @@ jobs:
         run: |
           rm -r doc # we don't need the data for making the docs, and we'll copy them from the linux generated ones.
           mkdir doc
-          rm ./bin/eo
+          rm ./bin/eo ./bin/genie.exe
       - uses: actions/download-artifact@v3
         with:
           name: scopes-unstable-docs-${{ needs.linux.outputs.revision }}
