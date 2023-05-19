@@ -20,7 +20,10 @@ jobs:
       - name: Build
         run: |
           curl https://hg.sr.ht/~duangle/majoreo/raw/eo | python3 - init majoreo && ./bin/eo import scopes
-          ./bin/eo install -y scopes-unstable
+          ./bin/eo install -y scopes-source-unstable
+          # patch genie recipe
+          wget "https://raw.githubusercontent.com/ScopesCommunity/scopes-unstable/main/workarounds/genie.eo" -O ./external/recipes/genie.eo
+          ./build.sh
           rm ./bin/eo
           tar -czf scopes-unstable-linux-${{ steps.revision.outputs.scopes-revision }}.tar.gz bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
       - name: Distribution Artifact
@@ -53,7 +56,6 @@ jobs:
           mv -f ./eo ./bin/eo # replace outdated eo version
           # patch recipes
           wget "https://raw.githubusercontent.com/ScopesCommunity/scopes-unstable/main/workarounds/clang.eo" -O ./external/recipes/clang.eo
-          wget "https://raw.githubusercontent.com/ScopesCommunity/scopes-unstable/main/workarounds/genie.eo" -O ./external/recipes/genie.eo
           # skip build.sh script as to not overwrite the newer eo
           ./bin/eo install -y genie clang spirv-tools spirv-cross
           ./bin/genie gmake
