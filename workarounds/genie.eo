@@ -1,0 +1,23 @@
+VERSION := "1115"
+SUMMARY := "GENie - Project generator tool"
+package genie
+    summary SUMMARY
+    version VERSION
+    platform linux
+
+    url := "https://github.com/bkaradzic/bx/raw/af8a6918b9fb3340a00d33252d0e91249669a67d/tools/bin/linux/genie"
+    binary := (download url)
+    binary :=
+        then
+            cmd := (shell "." (dict))
+            cmd "chmod a+x \"{binary}\""
+            binary
+    alias "/bin/genie" binary
+package genie
+    summary SUMMARY
+    version VERSION
+    platform windows windows-mingw
+
+    url := "https://github.com/bkaradzic/bx/raw/master/tools/bin/windows/genie.exe"
+    binary := (download url)
+    alias "/bin/genie.exe" binary

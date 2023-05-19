@@ -51,8 +51,9 @@ jobs:
           ./eo import scopes
           ./eo install -y scopes-source-unstable
           mv -f ./eo ./bin/eo # replace outdated eo version
-          # patch clang recipe
+          # patch recipes
           wget "https://raw.githubusercontent.com/ScopesCommunity/scopes-unstable/main/workarounds/clang.eo" -O ./external/recipes/clang.eo
+          wget "https://raw.githubusercontent.com/ScopesCommunity/scopes-unstable/main/workarounds/genie.eo" -O ./external/recipes/genie.eo
           # skip build.sh script as to not overwrite the newer eo
           ./bin/eo install -y genie clang spirv-tools spirv-cross
           ./bin/genie gmake
