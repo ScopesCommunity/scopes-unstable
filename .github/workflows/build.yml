@@ -13,7 +13,7 @@ jobs:
         run: |
           hg clone -U https://hg.sr.ht/~duangle/scopes/
           pushd scopes
-          echo "::set-output name=scopes-revision::$(hg id -r tip -T '{node|short}')"
+          echo "::set-output name=scopes-revision::$(hg id -r default -T '{node|short}')"
           popd
       - name: Install build dependencies
         run: sudo apt install mkdocs python3-pip libtinfo5
