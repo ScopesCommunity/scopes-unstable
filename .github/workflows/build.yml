@@ -55,7 +55,7 @@ jobs:
           ./eo install -y scopes-unstable
       - name: Cleanup
         run: |
-          rm ./bin/eo ./bin/genie.exe
+          rm -f ./bin/eo ./bin/genie.exe
       - run: zip -r scopes-unstable-windows-${{ needs.linux.outputs.revision }}.zip bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
       - name: Distribution Artifact
         uses: actions/upload-artifact@v3
