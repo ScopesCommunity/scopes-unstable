@@ -12,7 +12,6 @@ jobs:
       - id: revision
         run: |
           echo "::set-output name=scopes-revision::$(hg identify https://hg.sr.ht/~duangle/scopes/)"
-          popd
       - name: Install build dependencies
         run: sudo apt install mkdocs python3-pip libtinfo5
       - name: Build
