@@ -5,7 +5,7 @@ on:
     - cron: "0 0 * * 0"
 jobs:
   linux:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     outputs:
       revision: ${{ steps.revision.outputs.scopes-revision }}
     steps:
