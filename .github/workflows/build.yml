@@ -1,37 +1,107 @@
 name: Scopes Nightly
 on:
+  push:
+    # DEBUG: for debugging run on branches too
+    # branches:
+    #   - main
+    #   - build-releases
+    # tags-ignore:
+    #   - 'v**-pre'
   workflow_dispatch:
-  schedule:
-    - cron: "0 0 * * 0"
+#   schedule:
+#     - cron: "0 0 * * 0"
 jobs:
-  linux:
+
+  linux-build:
     runs-on: ubuntu-22.04
     outputs:
-      revision: ${{ steps.revision.outputs.scopes-revision }}
+      scopes-next-version: ${{ steps.version.outputs.scopes-next-version }}
+      scopes-build-version: ${{ steps.version.outputs.scopes-build-version }}
     steps:
-      - id: revision
-        run: |
-          echo "::set-output name=scopes-revision::$(hg identify https://hg.sr.ht/~duangle/scopes/)"
+
       - name: Install build dependencies
         run: sudo apt install mkdocs python3-pip libtinfo5
-      - name: Build
+      - name: Install MajorEO Package Manager
         run: |
-          curl https://hg.sr.ht/~duangle/majoreo/raw/eo | python3 - init majoreo && ./bin/eo import scopes
+
+          # install eo package manager
+          curl -S --no-progress-meter \
+              https://hg.sr.ht/~duangle/majoreo/raw/eo \
+                  | python3 - init majoreo
+
+      - name: Fetch Scopes Source Code and Build Recipes
+        run: |
+
+          # fetch the recipe
+          ./bin/eo import scopes
+          
+          # fetch the source code via the "source code" package
           ./bin/eo install -y scopes-source-unstable
-          # patch genie recipe
-          wget "https://raw.githubusercontent.com/ScopesCommunity/scopes-unstable/main/workarounds/genie.eo" -O ./external/recipes/genie.eo
-          ./build.sh
-          rm ./bin/eo
-          tar -czf scopes-unstable-linux-${{ steps.revision.outputs.scopes-revision }}.tar.gz bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
+          
+          # patch genie recipe from the source code
+          curl -S --no-progress-meter \
+              "https://raw.githubusercontent.com/ScopesCommunity/scopes-unstable/main/workarounds/genie.eo" \
+              -o ./external/recipes/genie.eo
+
+      - name: Cache downloaded dependencies
+        id: cache-eo
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-eo-downloads
+        with:
+          path: ./.eo/dlcache
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('external/recipes/*.eo') }}
+              
+      - name: Install & Build Dependencies
+        run: |
+
+          ./bin/eo install -y genie clang clang-runtime spirv-tools spirv-cross pcre lmdb libffi
+          ./bin/eo sync
+
+      - name: Build Scopes
+        run: |
+
+          ./bin/genie gmake
+          make -j$(nproc) -C build config=release
+
+      # TODO: this shouldn't need the binary to get this info, it
+      # should be static in the code, its just challenging to parse
+      # config.h
+      - name: Get Version
+        id: version
+        env:
+          GH_RUN_NUMBER: ${{ github.run_number }}
+        run: |
+
+          ./bin/scopes -v
+
+          # get the version number, construct the build version and save to outputs
+          next_version="$(./bin/scopes -v | head -n 1 | awk '{print $2}')"
+          build_version="${next_version}-pre${GH_RUN_NUMBER}"
+
+          echo "Current in-source version number: ${next_version}"
+          echo "Build version: $build_version"
+          
+          echo "scopes-next-version=${next_version}" >> $GITHUB_OUTPUT
+          echo "scopes-build-version=" >> $GITHUB_OUTPUT
+
+      - name: Package artifact
+        run: |
+          
+          tar -czf \
+              scopes-linux.tar.gz \
+              bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
+
       - name: Distribution Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: scopes-unstable-linux-${{ steps.revision.outputs.scopes-revision }}
-          path: scopes-unstable-linux-${{ steps.revision.outputs.scopes-revision }}.tar.gz
+          name: scopes-linux
+          path: scopes-linux.tar.gz
+
       - name: Standalone Documentation
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: scopes-unstable-docs-${{ steps.revision.outputs.scopes-revision }}
+          name: scopes-unstable-docs
           path: doc/
   windows:
     runs-on: windows-latest
@@ -41,22 +111,39 @@ jobs:
         shell: msys2 {0}
     if: ${{ !always() }}
     steps:
-      - uses: msys2/setup-msys2@v2
-      - name: Install build dependencies
-        run: pacman -S --noconfirm make mingw64/mingw-w64-x86_64-python mingw64/mingw-w64-x86_64-python-pip zip unzip mingw64/mingw-w64-x86_64-gcc mingw64/mingw-w64-x86_64-libxml2
-      - name: Build
+
+      - id: revision
+        name: Resolve the current scopes revision
         run: |
-          wget "https://hg.sr.ht/~duangle/majoreo/raw/eo" -O ./eo
-          chmod +x ./eo
-          ./eo init
-          ./eo import scopes
-          ./eo install -y scopes-unstable
-      - name: Cleanup
-        run: |
-          rm -f ./bin/eo ./bin/genie.exe
-      - run: zip -r scopes-unstable-windows-${{ needs.linux.outputs.revision }}.zip bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
-      - name: Distribution Artifact
-        uses: actions/upload-artifact@v3
+
+          rev=$(hg identify https://hg.sr.ht/~duangle/scopes/)
+          echo "scopes-revision=${rev}" >> $GITHUB_OUTPUT
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
         with:
-          name: scopes-unstable-windows-${{ needs.linux.outputs.revision }}
-          path: scopes-unstable-windows-${{ needs.linux.outputs.revision }}.zip
+          name: scopes-linux
+          path: scopes-${{ steps.revision.outputs.scopes-revision }}-linux.tar.gz
+      # DEBUG
+      # - name: Download Build Artifacts
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: scopes-windows
+      #     path: scopes-${{ steps.revision.outputs.scopes-revision }}-windows.zip
+          
+      - name: Tag
+        uses: fatjyc/github-tagger@v0.0.1
+        with:
+          tag: ${{ github.run_number }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Release
+        uses: softprops/action-gh-release@v0.1.15
+        with:
+          prerelease: true
+          name: ${{ steps.revision.outputs.scopes-build-version }}
+          tag_name: ${{ steps.revision.outputs.scopes-build-version }}
+          body: "Pre-release 'nightly' build of Scopes from upstream revision of: ${{ steps.revision.outputs.scopes-revision }}"
+          files: |
+            scopes-${{ steps.revision.outputs.scopes-revision }}-linux.tar.gz
+
