@@ -39,6 +39,7 @@ jobs:
     defaults:
       run:
         shell: msys2 {0}
+    if: ${{ !always() }}
     steps:
       - uses: msys2/setup-msys2@v2
       - name: Install build dependencies
