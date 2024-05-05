@@ -12,17 +12,7 @@ on:
 #     - cron: "0 0 * * 0"
 jobs:
 
-  collect-metadata:
-    runs-on: ubuntu-22.04
-    outputs:
-      scopes-next-version: ${{ steps.version.outputs.scopes-next-version }}
-      scopes-build-version: ${{ steps.version.outputs.scopes-build-version }}
-
-    steps:
-
-
   linux-build:
-    needs: collect-metadata
     runs-on: ubuntu-22.04
     steps:
 
