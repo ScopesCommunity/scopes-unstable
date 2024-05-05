@@ -39,8 +39,6 @@ jobs:
 
           chmod ug+x ./bin/eo
 
-          ./bin/eo init --silent-progress
-
       - name: Patch recipes
         run: |
           cd scopes-default
