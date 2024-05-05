@@ -171,5 +171,5 @@ jobs:
           Build number: ${{ steps.get-build-version.outputs.scopes-build-version }}
 
         files: |
-          scopes${{ steps.get-build-version.outputs.scopes-build-version }}-linux.tar.gz
+          scopes-linux.tar.gz
 
