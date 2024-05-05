@@ -2,9 +2,9 @@ name: Scopes Nightly
 on:
   push:
     # DEBUG: for debugging run on branches too
-    # branches:
-    #   - main
-    #   - build-releases
+    branches:
+      - main
+      - build-releases
     # tags-ignore:
     #   - 'v**-pre'
   workflow_dispatch:
