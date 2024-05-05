@@ -18,8 +18,19 @@ jobs:
 
       - name: Install build dependencies
         run: sudo apt install mkdocs python3-pip libtinfo5
-      - name: Install MajorEO Package Manager
+
+      - name: Fetch Scopes Source Code and Build Recipes
         run: |
+
+          curl -S --no-progress-meter -o scopes.tar.gz https://hg.sr.ht/~duangle/scopes/archive/default.tar.gz
+          # extracts to "scopes-default" folder
+          tar xvz -f scopes.tar.gz
+
+        
+      - name: Install MajorEO Package
+        run: |
+
+          cd scopes-default
 
           # install eo package manager
           mkdir -p ./bin
@@ -29,21 +40,15 @@ jobs:
           chmod ug+x ./bin/eo
 
           ./bin/eo init --silent-progress
-          
 
-      - name: Fetch Scopes Source Code and Build Recipes
+      - name: Patch recipes
         run: |
-
-          # fetch the recipe
-          ./bin/eo import --silent-progress scopes
-          
-          # fetch the source code via the "source code" package
-          ./bin/eo install --silent-progress -y scopes-source-unstable
-          
+          cd scopes-default
           # patch genie recipe from the source code
           curl -S --no-progress-meter \
               "https://raw.githubusercontent.com/ScopesCommunity/scopes-unstable/main/workarounds/genie.eo" \
               -o ./external/recipes/genie.eo
+
 
       - name: Cache downloaded dependencies
         id: cache-eo
@@ -60,32 +65,13 @@ jobs:
           ./bin/eo install --silent-progress -y genie clang clang-runtime spirv-tools spirv-cross pcre lmdb libffi
           ./bin/eo sync --silent-progress
 
+      # TODO: we could cache the build of scopes as well if there were
+      # no changes
       - name: Build Scopes
         run: |
 
           ./bin/genie gmake
           make -j$(nproc) -C build config=release
-
-      # TODO: this shouldn't need the binary to get this info, it
-      # should be static in the code, its just challenging to parse
-      # config.h
-      # - name: Get Version
-      #   id: version
-      #   env:
-      #     GH_RUN_NUMBER: ${{ github.run_number }}
-      #   run: |
-
-      #     ./bin/scopes -v
-
-      #     # get the version number, construct the build version and save to outputs
-      #     next_version="$(./bin/scopes -v | head -n 1 | awk '{print $2}')"
-      #     build_version="${next_version}-pre${GH_RUN_NUMBER}"
-
-      #     echo "Current in-source version number: ${next_version}"
-      #     echo "Build version: $build_version"
-          
-      #     echo "scopes-next-version=${next_version}" >> $GITHUB_OUTPUT
-      #     echo "scopes-build-version=" >> $GITHUB_OUTPUT
 
       - name: Package artifact
         run: |
