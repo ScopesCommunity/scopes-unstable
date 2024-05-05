@@ -91,6 +91,46 @@ jobs:
           name: scopes-linux
           path: scopes-default/scopes-linux.tar.gz
 
+  windows:
+    runs-on: windows-latest
+    # needs: linux
+    defaults:
+      run:
+        shell: msys2 {0}
+    if: ${{ !always() }}
+    steps:
+      - uses: msys2/setup-msys2@v2
+      - name: Install build dependencies
+        run: |
+          pacman -S --noconfirm \
+              make \
+              mingw64/mingw-w64-x86_64-python \
+              mingw64/mingw-w64-x86_64-python-pip \
+              zip \
+              unzip \
+              mingw64/mingw-w64-x86_64-gcc \
+              mingw64/mingw-w64-x86_64-libxml2
+
+      - name: Build
+        run: |
+          wget "https://hg.sr.ht/~duangle/majoreo/raw/eo" -O ./eo
+          chmod +x ./eo
+          ./eo init
+          ./eo import scopes
+          ./eo install -y scopes-unstable
+      - name: Cleanup
+        run: |
+          rm -f ./bin/eo ./bin/genie.exe
+      - run: |
+          zip -r scopes-unstable-windows-${{ needs.linux.outputs.revision }}.zip \
+              bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: scopes-windows
+          path: scopes-unstable-windows-${{ needs.linux.outputs.revision }}.zip    
+          
   release:
     needs: linux-build
     runs-on: ubuntu-22.04
@@ -143,13 +183,17 @@ jobs:
       with:
         name: scopes-linux
         path: scopes-linux.tar.gz
-    # DEBUG
+
     # - name: Download Build Artifacts
     #   uses: actions/download-artifact@v4
     #   with:
     #     name: scopes-windows
-    #     path: scopes-${{ steps.revision.outputs.scopes-revision }}-windows.zip
+    #     path: scopes-windows.zip
 
+    - run: |
+
+        ls
+        
     - name: Tag
       uses: fatjyc/github-tagger@v0.0.1
       with:
@@ -172,4 +216,5 @@ jobs:
 
         files: |
           scopes-linux.tar.gz
+
 
