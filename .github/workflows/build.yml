@@ -25,9 +25,14 @@ jobs:
         run: |
 
           # install eo package manager
+          mkdir -p ./bin
           curl -S --no-progress-meter \
-              https://hg.sr.ht/~duangle/majoreo/raw/eo \
-                  | python3 - init majoreo
+              https://hg.sr.ht/~duangle/majoreo/raw/eo > ./bin/eo
+
+          chmod ug+x ./bin/eo
+
+          ./bin/eo init
+          
 
       - name: Fetch Scopes Source Code and Build Recipes
         run: |
@@ -103,14 +108,6 @@ jobs:
         with:
           name: scopes-unstable-docs
           path: doc/
-  windows-build:
-    runs-on: windows-latest
-    needs: linux-build
-    defaults:
-      run:
-        shell: msys2 {0}
-    if: ${{ !always() }}
-    steps:
 
       - id: revision
         name: Resolve the current scopes revision
