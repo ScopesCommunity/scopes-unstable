@@ -111,11 +111,14 @@ jobs:
         GH_RUN_NUMBER: ${{ github.run_number }}
 
       run: |
-        curl -S --no-progress-meter https://hg.sr.ht/~duangle/scopes/raw/include/scopes/config.h > config.h
 
-        major="$(cat config.h | grep SCOPES_VERSION_MAJOR | awk '{print $3}') | xargs"
-        minor="$(cat config.h | grep SCOPES_VERSION_MINOR | awk '{print $3}') | xargs"
-        patch="$(cat config.h | grep SCOPES_VERSION_PATCH | awk '{print $3}') | xargs"
+        # need to convert line endings
+        sudo apt install -y dos2unix        
+        curl -S --no-progress-meter https://hg.sr.ht/~duangle/scopes/raw/include/scopes/config.h | dos2unix > config.h
+
+        major="$(echo $(cat config.h | grep SCOPES_VERSION_MAJOR | awk '{print $3}'))"
+        minor="$(cat config.h | grep SCOPES_VERSION_MINOR | awk '{print $3}')"
+        patch="$(cat config.h | grep SCOPES_VERSION_PATCH | awk '{print $3}')"
 
         next_version="${major}.${minor}.${patch}"
 
