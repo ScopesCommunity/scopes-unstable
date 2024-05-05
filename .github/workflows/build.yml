@@ -60,6 +60,7 @@ jobs:
       - name: Install & Build Dependencies
         run: |
 
+          cd scopes-default
           ./bin/eo install --silent-progress -y genie clang clang-runtime spirv-tools spirv-cross pcre lmdb libffi
           ./bin/eo sync --silent-progress
 
@@ -68,12 +69,14 @@ jobs:
       - name: Build Scopes
         run: |
 
+          cd scopes-default
           ./bin/genie gmake
           make -j$(nproc) -C build config=release
 
       - name: Package artifact
         run: |
           
+          cd scopes-default
           tar -czf \
               scopes-linux.tar.gz \
               bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
