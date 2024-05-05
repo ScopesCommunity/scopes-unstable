@@ -12,10 +12,14 @@ on:
 #     - cron: "0 0 * * 0"
 jobs:
 
+  # TODO: before running builds or making releases check to see if
+  # there has been any changes by using cache invalidation
+
   linux-build:
     runs-on: ubuntu-22.04
     steps:
 
+      # TODO: can probably cache this on a timer to update every week or something
       - name: Install build dependencies
         run: sudo apt install mkdocs python3-pip libtinfo5
 
@@ -27,7 +31,7 @@ jobs:
           tar xvz -f scopes.tar.gz
 
         
-      - name: Install MajorEO Package
+      - name: Install MajorEO
         run: |
 
           cd scopes-default
@@ -81,11 +85,11 @@ jobs:
               scopes-linux.tar.gz \
               bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
 
-      - name: Distribution Artifact
+      - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: scopes-linux
-          path: scopes-linux.tar.gz
+          path: scopes-default/scopes-linux.tar.gz
 
   release:
     needs: linux-build
@@ -109,9 +113,9 @@ jobs:
       run: |
         curl -S --no-progress-meter https://hg.sr.ht/~duangle/scopes/raw/include/scopes/config.h > config.h
 
-        major=$(cat config.h | grep SCOPES_VERSION_MAJOR | awk '{print $3}')
-        minor=$(cat config.h | grep SCOPES_VERSION_MINOR | awk '{print $3}')
-        patch=$(cat config.h | grep SCOPES_VERSION_PATCH | awk '{print $3}')
+        major="$(cat config.h | grep SCOPES_VERSION_MAJOR | awk '{print $3}') | xargs"
+        minor="$(cat config.h | grep SCOPES_VERSION_MINOR | awk '{print $3}') | xargs"
+        patch="$(cat config.h | grep SCOPES_VERSION_PATCH | awk '{print $3}') | xargs"
 
         next_version="${major}.${minor}.${patch}"
 
@@ -125,11 +129,11 @@ jobs:
         echo "scopes-next-version=${next_version}" >> $GITHUB_OUTPUT
         echo "scopes-build-version=${build_version}" >> $GITHUB_OUTPUT
 
-    - name: Standalone Documentation
-      uses: actions/upload-artifact@v4
-      with:
-        name: scopes-unstable-docs
-        path: doc/
+    # - name: Standalone Documentation
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: scopes-unstable-docs
+    #     path: doc/
 
     - name: Download Build Artifacts
       uses: actions/download-artifact@v4
