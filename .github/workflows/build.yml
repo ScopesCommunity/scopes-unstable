@@ -115,7 +115,7 @@ jobs:
         echo "scopes-revision=${rev}" >> $GITHUB_OUTPUT
 
     - name: Resolve build version
-      name: get-build-version
+      id: get-build-version
       env:
         GH_RUN_NUMBER: ${{ github.run_number }}
 
