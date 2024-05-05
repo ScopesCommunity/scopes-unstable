@@ -215,8 +215,7 @@ jobs:
           Build number: ${{ steps.get-build-version.outputs.scopes-build-version }}
 
         fail_on_unmatched_files: true
-        with:
-            files: |
-              scopes-linux.tar.gz
+        files: |
+          scopes-linux.tar.gz
 
 
