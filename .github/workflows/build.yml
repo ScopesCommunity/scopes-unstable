@@ -103,9 +103,9 @@ jobs:
         with:
           name: scopes-unstable-docs
           path: doc/
-  windows:
+  windows-build:
     runs-on: windows-latest
-    needs: linux
+    needs: linux-build
     defaults:
       run:
         shell: msys2 {0}
