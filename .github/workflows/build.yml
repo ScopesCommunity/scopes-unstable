@@ -54,7 +54,7 @@ jobs:
 
       - name: Cache downloaded dependencies
         id: cache-eo
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         env:
           cache-name: cache-eo-downloads
         with:
@@ -195,13 +195,13 @@ jobs:
         ls
         
     - name: Tag
-      uses: fatjyc/github-tagger@v0.0.1
+      uses: fatjyc/github-tagger@v0.0
       with:
         tag: ${{ steps.get-build-version.outputs.scopes-build-version }}
         repo-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Release
-      uses: softprops/action-gh-release@v0.1.15
+      uses: softprops/action-gh-release@v2
       with:
         prerelease: true
         name: |
@@ -214,7 +214,9 @@ jobs:
 
           Build number: ${{ steps.get-build-version.outputs.scopes-build-version }}
 
-        files: |
-          scopes-linux.tar.gz
+        fail_on_unmatched_files: true
+        with:
+            files: |
+              scopes-linux.tar.gz
 
 
