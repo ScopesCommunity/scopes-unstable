@@ -195,7 +195,7 @@ jobs:
         ls
         
     - name: Tag
-      uses: fatjyc/github-tagger@v0.0
+      uses: fatjyc/github-tagger@v0.0.3
       with:
         tag: ${{ steps.get-build-version.outputs.scopes-build-version }}
         repo-token: ${{ secrets.GITHUB_TOKEN }}
