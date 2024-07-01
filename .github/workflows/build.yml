@@ -192,7 +192,8 @@ jobs:
 
     - run: |
 
-        ls
+        ls -al
+        file scopes-linux.tar.gz
         
     - name: Tag
       # NOTE: for some reason the latest versions cannot be used, so
