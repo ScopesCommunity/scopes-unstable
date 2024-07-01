@@ -182,7 +182,6 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: scopes-linux
-        path: scopes-linux.tar.gz
 
     # - name: Download Build Artifacts
     #   uses: actions/download-artifact@v4
@@ -192,8 +191,7 @@ jobs:
 
     - run: |
 
-        ls -al
-        file scopes-linux.tar.gz
+        ls -al scopes-linux
         
     - name: Tag
       # NOTE: for some reason the latest versions cannot be used, so
