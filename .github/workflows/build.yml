@@ -189,11 +189,6 @@ jobs:
     #     name: scopes-windows
     #     path: scopes-windows.zip
 
-    - run: |
-
-        ls -al
-        ls -al scopes-linux
-        
     - name: Tag
       # NOTE: for some reason the latest versions cannot be used, so
       # we have to use this old one
