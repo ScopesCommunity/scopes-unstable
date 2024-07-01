@@ -191,6 +191,7 @@ jobs:
 
     - run: |
 
+        ls -al
         ls -al scopes-linux
         
     - name: Tag
