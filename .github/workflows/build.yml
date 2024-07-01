@@ -65,7 +65,7 @@ jobs:
         run: |
 
           cd scopes-default
-          ./bin/eo install --silent-progress -y genie clang clang-runtime spirv-tools spirv-cross pcre lmdb libffi
+          ./bin/eo install --silent-progress -y genie clang spirv-tools spirv-cross pcre lmdb libffi
           ./bin/eo sync --silent-progress
 
       # TODO: we could cache the build of scopes as well if there were
