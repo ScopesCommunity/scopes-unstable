@@ -24,7 +24,7 @@ jobs:
           rm ./bin/eo
           tar -czf scopes-unstable-linux-${{ steps.revision.outputs.scopes-revision }}.tar.gz bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
       - name: Distribution Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: scopes-unstable-linux-${{ steps.revision.outputs.scopes-revision }}
           path: scopes-unstable-linux-${{ steps.revision.outputs.scopes-revision }}.tar.gz
