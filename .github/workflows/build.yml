@@ -29,7 +29,7 @@ jobs:
           name: scopes-unstable-linux-${{ steps.revision.outputs.scopes-revision }}
           path: scopes-unstable-linux-${{ steps.revision.outputs.scopes-revision }}.tar.gz
       - name: Standalone Documentation
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: scopes-unstable-docs-${{ steps.revision.outputs.scopes-revision }}
           path: doc/
@@ -56,7 +56,7 @@ jobs:
           rm -f ./bin/eo ./bin/genie.exe
       - run: zip -r scopes-unstable-windows-${{ needs.linux.outputs.revision }}.zip bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
       - name: Distribution Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: scopes-unstable-windows-${{ needs.linux.outputs.revision }}
           path: scopes-unstable-windows-${{ needs.linux.outputs.revision }}.zip
