@@ -18,8 +18,6 @@ jobs:
         run: |
           curl https://hg.sr.ht/~duangle/majoreo/raw/eo | python3 - init majoreo && ./bin/eo import scopes
           ./bin/eo install -y scopes-source-unstable
-          # patch genie recipe
-          wget "https://raw.githubusercontent.com/ScopesCommunity/scopes-unstable/main/workarounds/genie.eo" -O ./external/recipes/genie.eo
           ./build.sh
           rm ./bin/eo
           tar -czf scopes-unstable-linux-${{ steps.revision.outputs.scopes-revision }}.tar.gz bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
@@ -39,7 +37,6 @@ jobs:
     defaults:
       run:
         shell: msys2 {0}
-    if: ${{ !always() }}
     steps:
       - uses: msys2/setup-msys2@v2
       - name: Install build dependencies
@@ -50,7 +47,8 @@ jobs:
           chmod +x ./eo
           ./eo init
           ./eo import scopes
-          ./eo install -y scopes-unstable
+          ./eo install -y scopes-source-unstable
+          ./build_mingw.sh
       - name: Cleanup
         run: |
           rm -f ./bin/eo ./bin/genie.exe
