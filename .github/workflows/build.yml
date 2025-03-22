@@ -18,6 +18,8 @@ jobs:
         run: |
           curl https://hg.sr.ht/~duangle/majoreo/raw/eo | python3 - init majoreo && ./bin/eo import scopes
           ./bin/eo install -y scopes-source-unstable
+          # patch genie recipe
+          wget "https://raw.githubusercontent.com/ScopesCommunity/scopes-unstable/main/workarounds/genie.eo" -O ./external/recipes/genie.eo
           ./build.sh
           rm ./bin/eo
           tar -czf scopes-unstable-linux-${{ steps.revision.outputs.scopes-revision }}.tar.gz bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
