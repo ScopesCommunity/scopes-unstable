@@ -18,7 +18,7 @@ jobs:
         working-directory: ./scopes
         run: |
           hg checkout default
-          ARTIFACT_NAME="scopes-unstable-linux-$(date "+%Y-%m-%d")-$(hg identify '{id|short}')-default"
+          ARTIFACT_NAME="scopes-unstable-linux-$(date "+%Y-%m-%d")-$(hg identify --template '{id|short}')-default"
           echo "artifact-name-default=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
           # patch genie recipe
           wget "https://raw.githubusercontent.com/ScopesCommunity/scopes-unstable/main/workarounds/genie.eo" -O ./external/recipes/genie.eo
@@ -36,7 +36,7 @@ jobs:
         run: 
           |
           hg checkout based
-          ARTIFACT_NAME="scopes-unstable-linux-$(date "+%Y-%m-%d")-$(hg identify '{id|short}')-based"
+          ARTIFACT_NAME="scopes-unstable-linux-$(date "+%Y-%m-%d")-$(hg identify --template '{id|short}')-based"
           echo "artifact-name-based=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
           # patch genie recipe
           wget "https://raw.githubusercontent.com/ScopesCommunity/scopes-unstable/main/workarounds/genie.eo" -O ./external/recipes/genie.eo
