@@ -16,13 +16,14 @@ function package_windows -a name
 end
 
 function artifact -a branch
+    hg checkout $branch
+
     set -l revision (hg identify --template '{id|short}')
     set -l date_string (date '+%Y-%m-%d')
     set artifact_name "scopes-unstable-$os_name-$date_string-$revision-$branch"
 
     echo "artifact-name-$branch=$artifact_name" >> $GITHUB_OUTPUT
 
-    hg checkout $branch
     # patch genie recipe
     cp -f ../workarounds/genie.eo ./external/recipes/genie.eo
     yes | bash ./$build_script --silent-progress
