@@ -9,71 +9,52 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install build dependencies
-        run: sudo apt install mkdocs python3-pip libtinfo5
-      - name: Acquire sources
+        run: sudo apt install mkdocs python3-pip libtinfo5 fish
+      - name: Prepare build
         run: |
           curl https://hg.sr.ht/~duangle/majoreo/raw/eo | python3 - init majoreo
           hg clone https://hg.sr.ht/~duangle/scopes/
-      - id: build-default
-        name: Build (default)
+      - id: build
+        name: Build
         working-directory: ./scopes
         run: |
-          hg checkout default
-          ARTIFACT_NAME="scopes-unstable-linux-$(date "+%Y-%m-%d")-$(hg identify --template '{id|short}')-default"
-          echo "artifact-name-default=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
-          # patch genie recipe
-          cp -f ../workarounds/genie.eo ./external/recipes/genie.eo
-          yes | ./build.sh --silent-progress
-          tar -czf $ARTIFACT_NAME.tar.gz --exclude "bin/eo" bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
+          fish ../build.fish linux
       - name: Artifact (default)
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.build-default.outputs.artifact-name-default }}
-          path: scopes/${{ steps.build-default.outputs.artifact-name-default }}.tar.gz
-      - id: build-based
-        name: Build (based)
-        working-directory: ./scopes
-        run: 
-          |
-          hg checkout based
-          ARTIFACT_NAME="scopes-unstable-linux-$(date "+%Y-%m-%d")-$(hg identify --template '{id|short}')-based"
-          echo "artifact-name-based=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
-          # patch genie recipe
-          cp -f ../workarounds/genie.eo ./external/recipes/genie.eo
-          yes | ./build.sh --silent-progress
-          rm ./bin/eo
-          tar -czf $ARTIFACT_NAME.tar.gz --exclude "bin/eo" bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
+          name: ${{ steps.build.outputs.artifact-name-default }}
+          path: scopes/${{ steps.build.outputs.artifact-name-default }}.tar.gz
       - name: Artifact (based)
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.build-based.outputs.artifact-name-based }}
-          path: scopes/${{ steps.build-based.outputs.artifact-name-based }}.tar.gz
+          name: ${{ steps.build.outputs.artifact-name-based }}
+          path: scopes/${{ steps.build.outputs.artifact-name-based }}.tar.gz
   windows:
     runs-on: windows-latest
     defaults:
       run:
         shell: msys2 {0}
     steps:
+      - uses: actions/checkout@v4
       - uses: msys2/setup-msys2@v2
       - name: Install build dependencies
-        run: pacman -S --noconfirm make mingw64/mingw-w64-x86_64-python mingw64/mingw-w64-x86_64-python-pip zip unzip mingw64/mingw-w64-x86_64-gcc mingw64/mingw-w64-x86_64-libxml2
-      - id: build-default
+        run: pacman -S --noconfirm make mingw64/mingw-w64-x86_64-python mingw64/mingw-w64-x86_64-python-pip zip unzip mingw64/mingw-w64-x86_64-gcc mingw64/mingw-w64-x86_64-libxml2 fish mercurial
+      - name: Prepare build
+        run: |
+          curl https://hg.sr.ht/~duangle/majoreo/raw/eo | python3 - init majoreo
+          hg clone https://hg.sr.ht/~duangle/scopes/
+      - id: build
         name: Build
+        working-directory: ./scopes
         run: |
-          ARTIFACT_NAME="scopes-unstable-windows-$(date "+%Y-%m-%d")-default"
-          echo "artifact-name-default=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
-          wget "https://hg.sr.ht/~duangle/majoreo/raw/eo" -O ./eo
-          chmod +x ./eo
-          ./eo init
-          ./eo import scopes
-          ./eo install -y scopes-source-unstable
-          ./build_mingw.sh --silent-progress
-      - name: Cleanup
-        run: |
-          rm -f ./bin/eo ./bin/genie.exe
-      - run: zip -r ${{ steps.build-default.outputs.artifact-name-default }}.zip bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
-      - name: Distribution Artifact
+          fish ../build.fish windows
+      - name: Artifact (default)
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.build-default.outputs.artifact-name-default }}
-          path: ${{ steps.build-default.outputs.artifact-name-default }}.zip
+          name: ${{ steps.build.outputs.artifact-name-default }}
+          path: scopes/${{ steps.build.outputs.artifact-name-default }}.zip
+      - name: Artifact (based)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.build.outputs.artifact-name-based }}
+          path: scopes/${{ steps.build.outputs.artifact-name-based }}.zip
