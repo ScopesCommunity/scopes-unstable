@@ -16,7 +16,8 @@ end
 
 function artifact -a branch
     set -l revision (hg identify --template '{id|short}')
-    set artifact_name "scopes-unstable-$os_name-(date '+%Y-%m-%d')-$revision-$branch"
+    set -l date_string (date '+%Y-%m-%d')
+    set artifact_name "scopes-unstable-$os_name-$date_string-$revision-$branch"
 
     if test $os_name = "windows"
         set GITHUB_OUTPUT (cygpath "$GITHUB_OUTPUT")
