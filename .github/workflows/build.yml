@@ -10,11 +10,13 @@ jobs:
       - name: Install build dependencies
         run: sudo apt install mkdocs python3-pip libtinfo5
       - name: Acquire sources
+        working-directory: ./scopes
         run: |
           curl https://hg.sr.ht/~duangle/majoreo/raw/eo | python3 - init majoreo
           hg clone https://hg.sr.ht/~duangle/scopes/
       - id: build-default
         name: Build (default)
+        working-directory: ./scopes
         run: |
           hg checkout default
           ARTIFACT_NAME="scopes-unstable-linux-$(date "+%Y-%m-%d")-$(hg identify '{id|short}')-default"
@@ -26,11 +28,13 @@ jobs:
           tar -czf $ARTIFACT_NAME.tar.gz bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
       - name: Artifact (default)
         uses: actions/upload-artifact@v4
+        working-directory: ./scopes
         with:
           name: ${{ steps.build-default.outputs.artifact-name-default }}
           path: ${{ steps.build-default.outputs.artifact-name-default }}.tar.gz
       - id: build-based
         name: Build (based)
+        working-directory: ./scopes
         run: |
           hg checkout based
           ARTIFACT_NAME="scopes-unstable-linux-$(date "+%Y-%m-%d")-$(hg identify '{id|short}')-based"
@@ -42,6 +46,7 @@ jobs:
           tar -czf $ARTIFACT_NAME.tar.gz bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
       - name: Artifact (based)
         uses: actions/upload-artifact@v4
+        working-directory: ./scopes
         with:
           name: ${{ steps.build-based.outputs.artifact-name-based }}
           path: ${{ steps.build-based.outputs.artifact-name-based }}.tar.gz
