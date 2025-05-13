@@ -26,7 +26,12 @@ function artifact -a branch
 
     # patch genie recipe
     cp -f ../workarounds/genie.eo ./external/recipes/genie.eo
-    yes | bash ./$build_script --silent-progress
+
+    rm -rf ./.eo/installed
+    bash ./$build_script --silent-progress
+    if test $status
+        exit $status
+    end
 
     if test $os_name = "windows"
         package_windows $artifact_name
