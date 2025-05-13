@@ -7,6 +7,7 @@ jobs:
   linux:
     runs-on: ubuntu-22.04
     steps:
+      - uses: actions/checkout@v4
       - name: Install build dependencies
         run: sudo apt install mkdocs python3-pip libtinfo5
       - name: Acquire sources
@@ -21,7 +22,7 @@ jobs:
           ARTIFACT_NAME="scopes-unstable-linux-$(date "+%Y-%m-%d")-$(hg identify --template '{id|short}')-default"
           echo "artifact-name-default=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
           # patch genie recipe
-          wget "https://raw.githubusercontent.com/ScopesCommunity/scopes-unstable/main/workarounds/genie.eo" -O ./external/recipes/genie.eo
+          cp -f ../workarounds/genie.eo ./external/recipes/genie.eo
           yes | ./build.sh --silent-progress
           tar -czf $ARTIFACT_NAME.tar.gz --exclude "bin/eo" bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
       - name: Artifact (default)
@@ -38,7 +39,7 @@ jobs:
           ARTIFACT_NAME="scopes-unstable-linux-$(date "+%Y-%m-%d")-$(hg identify --template '{id|short}')-based"
           echo "artifact-name-based=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
           # patch genie recipe
-          wget "https://raw.githubusercontent.com/ScopesCommunity/scopes-unstable/main/workarounds/genie.eo" -O ./external/recipes/genie.eo
+          cp -f ../workarounds/genie.eo ./external/recipes/genie.eo
           yes | ./build.sh --silent-progress
           rm ./bin/eo
           tar -czf $ARTIFACT_NAME.tar.gz --exclude "bin/eo" bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
