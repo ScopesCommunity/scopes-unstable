@@ -4,6 +4,7 @@ set os_name $argv[1]
 set build_script build.sh
 if test $os_name = "windows"
     set build_script build_mingw.sh
+    set GITHUB_OUTPUT (cygpath "$GITHUB_OUTPUT")
 end
 
 function package_linux -a name
@@ -18,10 +19,6 @@ function artifact -a branch
     set -l revision (hg identify --template '{id|short}')
     set -l date_string (date '+%Y-%m-%d')
     set artifact_name "scopes-unstable-$os_name-$date_string-$revision-$branch"
-
-    if test $os_name = "windows"
-        set GITHUB_OUTPUT (cygpath "$GITHUB_OUTPUT")
-    end
 
     echo "artifact-name-$branch=$artifact_name" >> $GITHUB_OUTPUT
 
