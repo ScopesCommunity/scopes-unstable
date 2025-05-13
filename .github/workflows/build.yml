@@ -10,7 +10,6 @@ jobs:
       - name: Install build dependencies
         run: sudo apt install mkdocs python3-pip libtinfo5
       - name: Acquire sources
-        working-directory: ./scopes
         run: |
           curl https://hg.sr.ht/~duangle/majoreo/raw/eo | python3 - init majoreo
           hg clone https://hg.sr.ht/~duangle/scopes/
@@ -28,14 +27,14 @@ jobs:
           tar -czf $ARTIFACT_NAME.tar.gz bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
       - name: Artifact (default)
         uses: actions/upload-artifact@v4
-        working-directory: ./scopes
         with:
           name: ${{ steps.build-default.outputs.artifact-name-default }}
-          path: ${{ steps.build-default.outputs.artifact-name-default }}.tar.gz
+          path: scopes/${{ steps.build-default.outputs.artifact-name-default }}.tar.gz
       - id: build-based
         name: Build (based)
         working-directory: ./scopes
-        run: |
+        run: 
+          |
           hg checkout based
           ARTIFACT_NAME="scopes-unstable-linux-$(date "+%Y-%m-%d")-$(hg identify '{id|short}')-based"
           echo "artifact-name-based=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
@@ -46,10 +45,9 @@ jobs:
           tar -czf $ARTIFACT_NAME.tar.gz bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
       - name: Artifact (based)
         uses: actions/upload-artifact@v4
-        working-directory: ./scopes
         with:
           name: ${{ steps.build-based.outputs.artifact-name-based }}
-          path: ${{ steps.build-based.outputs.artifact-name-based }}.tar.gz
+          path: scopes/${{ steps.build-based.outputs.artifact-name-based }}.tar.gz
   windows:
     runs-on: windows-latest
     defaults:
@@ -69,7 +67,7 @@ jobs:
           ./eo init
           ./eo import scopes
           ./eo install -y scopes-source-unstable
-          ./build_mingw.sh
+          ./build_mingw.sh --silent-progress
       - name: Cleanup
         run: |
           rm -f ./bin/eo ./bin/genie.exe
