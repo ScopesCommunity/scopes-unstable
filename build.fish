@@ -17,12 +17,17 @@ end
 function artifact -a branch
     set -l revision (hg identify --template '{id|short}')
     set artifact_name "scopes-unstable-$os_name-(date '+%Y-%m-%d')-$revision-$branch"
+
+    if test $os_name = "windows"
+        set GITHUB_OUTPUT (cygpath "$GITHUB_OUTPUT")
+    end
+
     echo "artifact-name-$branch=$artifact_name" >> $GITHUB_OUTPUT
 
     hg checkout $branch
     # patch genie recipe
     cp -f ../workarounds/genie.eo ./external/recipes/genie.eo
-    yes | ./$build_script --silent-progress
+    yes | bash ./$build_script --silent-progress
 
     if test $os_name = "windows"
         package_windows $artifact_name
