@@ -30,7 +30,7 @@ function artifact -a branch
     rm -rf ./.eo/installed
     bash ./$build_script --silent-progress
     if test "$status" -ne 0
-        exit $status
+        exit 1
     end
 
     if test $os_name = "windows"
