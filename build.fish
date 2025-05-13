@@ -29,7 +29,7 @@ function artifact -a branch
 
     rm -rf ./.eo/installed
     bash ./$build_script --silent-progress
-    if test $status
+    if test "$status" -ne 0
         exit $status
     end
 
