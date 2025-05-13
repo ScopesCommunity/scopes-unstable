@@ -23,8 +23,7 @@ jobs:
           # patch genie recipe
           wget "https://raw.githubusercontent.com/ScopesCommunity/scopes-unstable/main/workarounds/genie.eo" -O ./external/recipes/genie.eo
           ./build.sh --silent-progress
-          rm ./bin/eo
-          tar -czf $ARTIFACT_NAME.tar.gz bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
+          tar -czf $ARTIFACT_NAME.tar.gz --exclude "bin/eo" bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
       - name: Artifact (default)
         uses: actions/upload-artifact@v4
         with:
@@ -42,7 +41,7 @@ jobs:
           wget "https://raw.githubusercontent.com/ScopesCommunity/scopes-unstable/main/workarounds/genie.eo" -O ./external/recipes/genie.eo
           ./build.sh --silent-progress
           rm ./bin/eo
-          tar -czf $ARTIFACT_NAME.tar.gz bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
+          tar -czf $ARTIFACT_NAME.tar.gz --exclude "bin/eo" bin/ doc/ include/ lib/ testing/ CREDITS.md LICENSE.md
       - name: Artifact (based)
         uses: actions/upload-artifact@v4
         with:
