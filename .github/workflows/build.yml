@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install build dependencies
-        run: sudo apt install mkdocs python3-pip libtinfo5 fish
+        run: sudo apt install mkdocs python3-pip libtinfo fish
       - name: Prepare build
         run: |
           curl https://hg.sr.ht/~duangle/majoreo/raw/eo | python3 - init majoreo
