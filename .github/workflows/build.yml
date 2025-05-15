@@ -18,7 +18,7 @@ jobs:
         name: Build
         working-directory: ./scopes
         run: |
-          fish ../build.fish linux
+          fish ../build.fish linux default based
       - name: Artifact (default)
         uses: actions/upload-artifact@v4
         with:
@@ -46,8 +46,9 @@ jobs:
       - id: build
         name: Build
         working-directory: ./scopes
+        
         run: |
-          fish ../build.fish windows
+          fish ../build.fish windows default
       - name: Artifact (default)
         uses: actions/upload-artifact@v4
         with:

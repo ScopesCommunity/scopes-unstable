@@ -40,5 +40,6 @@ function artifact -a branch
     end
 end
 
-artifact default
-artifact based
+for branch in $argv[2..-1]
+    artifact $branch
+end
