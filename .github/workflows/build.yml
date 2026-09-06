@@ -19,23 +19,18 @@ jobs:
       - run: df -h
       - name: Prepare build
         run: |
-          curl https://hg.sr.ht/~duangle/majoreo/raw/eo | python3 - init majoreo
-          hg clone https://hg.sr.ht/~duangle/scopes/
+          curl https://git.sr.ht/~duangle/majoreo/raw/eo | python3 - init majoreo
+          git clone https://git.sr.ht/~duangle/scopes/
       - id: build
         name: Build
         working-directory: ./scopes
         run: |
-          fish ../build.fish linux default based
-      - name: Artifact (default)
+          fish ../build.fish linux main
+      - name: Artifact (main)
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.build.outputs.artifact-name-default }}
-          path: scopes/${{ steps.build.outputs.artifact-name-default }}.tar.gz
-      - name: Artifact (based)
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ steps.build.outputs.artifact-name-based }}
-          path: scopes/${{ steps.build.outputs.artifact-name-based }}.tar.gz
+          name: ${{ steps.build.outputs.artifact-name-main }}
+          path: scopes/${{ steps.build.outputs.artifact-name-main }}.tar.gz
   windows:
     runs-on: windows-latest
     defaults:
@@ -48,8 +43,8 @@ jobs:
         run: pacman -S --noconfirm make mingw64/mingw-w64-x86_64-python mingw64/mingw-w64-x86_64-python-pip zip unzip mingw64/mingw-w64-x86_64-gcc mingw64/mingw-w64-x86_64-libxml2 fish mercurial
       - name: Prepare build
         run: |
-          curl https://hg.sr.ht/~duangle/majoreo/raw/eo | python3 - init majoreo
-          hg clone https://hg.sr.ht/~duangle/scopes/
+          curl https://git.sr.ht/~duangle/majoreo/raw/eo | python3 - init majoreo
+          hg clone https://git.sr.ht/~duangle/scopes/
       - id: build
         name: Build
         working-directory: ./scopes
@@ -61,8 +56,3 @@ jobs:
         with:
           name: ${{ steps.build.outputs.artifact-name-default }}
           path: scopes/${{ steps.build.outputs.artifact-name-default }}.zip
-      - name: Artifact (based)
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ steps.build.outputs.artifact-name-based }}
-          path: scopes/${{ steps.build.outputs.artifact-name-based }}.zip
