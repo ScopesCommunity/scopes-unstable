@@ -24,9 +24,6 @@ function artifact -a branch
 
     echo "artifact-name-$branch=$artifact_name" >> $GITHUB_OUTPUT
 
-    # patch genie recipe
-    cp -f ../workarounds/genie.eo ./external/recipes/genie.eo
-
     rm -rf ./.eo/installed
     bash ./$build_script --silent-progress
     if test "$status" -ne 0
