@@ -16,9 +16,9 @@ function package_windows -a name
 end
 
 function artifact -a branch
-    hg checkout $branch
+    git checkout $branch
 
-    set -l revision (hg identify --template '{id|short}')
+    set -l revision (git rev-parse --short HEAD)
     set -l date_string (date '+%Y-%m-%d')
     set artifact_name "scopes-unstable-$os_name-$date_string-$revision-$branch"
 
