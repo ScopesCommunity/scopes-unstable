@@ -19,7 +19,6 @@ jobs:
       - run: df -h
       - name: Prepare build
         run: |
-          curl https://git.sr.ht/~duangle/majoreo/blob/main/eo | python3 - init majoreo
           git clone https://git.sr.ht/~duangle/scopes/
       - id: build
         name: Build
@@ -43,8 +42,7 @@ jobs:
         run: pacman -S --noconfirm make mingw64/mingw-w64-x86_64-python mingw64/mingw-w64-x86_64-python-pip zip unzip mingw64/mingw-w64-x86_64-gcc mingw64/mingw-w64-x86_64-libxml2 fish mercurial
       - name: Prepare build
         run: |
-          curl https://git.sr.ht/~duangle/majoreo/blob/main/eo | python3 - init majoreo
-          hg clone https://git.sr.ht/~duangle/scopes/
+          git clone https://git.sr.ht/~duangle/scopes/
       - id: build
         name: Build
         working-directory: ./scopes
